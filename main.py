@@ -82,21 +82,20 @@ if __name__ == "__main__":
     while True:
         print("new iter")
         try:
-            if not os.path.exists(fs_music_root):
-                raise Exception("path {} does not exist".format(fs_music_root))
             result = bot.Get_Updates()
-
             if not result['ok']:
                 print("Returned failure from GetUpdates call")
                 continue
 
             if len(result['result']) > counter:
                 print("Arrived new message")
-
                 counter = len(result['result'])
+                if not os.path.exists(fs_music_root):
+                    raise Exception("Download device not correctly mounted, path doesn't exist: Path = {}".format(fs_music_root))
+
                 song_url = bot.Get_SongUrl(result['result'][-1])
                 if len(song_url) > 0:
-                    print("downloading file: " + bot.GetDownloadFilename(song_url))
+                    print("Downloading file: " + bot.GetDownloadFilename(song_url))
                     bot.Download(song_url)
                     bot.Send_Song(bot.GetDownloadFilename(song_url))
         except Exception as e:
